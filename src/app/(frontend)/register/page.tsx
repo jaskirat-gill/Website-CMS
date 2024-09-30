@@ -3,73 +3,86 @@ import { FormEvent, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { register } from "@/actions/register";
-
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
 export default function Register() {
   const [error, setError] = useState<string>();
   const router = useRouter();
-  const ref = useRef<HTMLFormElement>(null);
 
-  const handleSubmit = async (formData: FormData) => {
-    const r = await register({
-        email: formData.get("email"),
-        password: formData.get("password"),
-        name: formData.get("name")    
-      });
-      ref.current?.reset();
-      if(r?.error){
-        setError(r.error);
-        return;
-      } else {
-        return router.push("/login");
-      }
-};
 
-return(
-    <section className="w-full h-screen flex items-center justify-center">
-          <form ref = {ref}
-            action={handleSubmit}
-            className="p-6 w-full max-w-[400px] flex flex-col justify-between items-center gap-2 
-            border border-solid border-black bg-white rounded">
-            {error && <div className="">{error}</div>}
-            <h1 className="mb-5 w-full text-2xl font-bold">Register</h1>
-    
-            <label className="w-full text-sm">Full Name</label>
-            <input
-              type="text"
-              placeholder="Full Name"
-              className="w-full h-8 border border-solid border-black py-1 px-2.5 rounded text-[13px]"
-              name="name"
-            />
-    
-            <label className="w-full text-sm">Email</label>
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full h-8 border border-solid border-black py-1 px-2.5 rounded"
-              name="email"
-            />
-    
-            <label className="w-full text-sm">Password</label>
-            <div className="flex w-full">
-              <input
-                type="password"
-                placeholder="Password"
-                className="w-full h-8 border border-solid border-black py-1 px-2.5 rounded"
-                name="password"
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const res = await register({
+      email: formData.get("email"),
+      password: formData.get("password"),
+      name: `${formData.get("first-name")} ${formData.get("last-name")}`,
+    });
+    if (res?.error) {
+      setError(res.error as string);
+    } else {
+      return router.push("/");
+    }
+  };
+
+  return (
+    <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
+      <div className="flex items-center justify-center py-12">
+        <div className="mx-auto grid w-[350px] gap-6">
+          <div className="grid gap-2 text-center">
+            <h1 className="text-3xl font-bold">Register</h1>
+            <p className="text-balance text-muted-foreground">
+              Fill in the form below to get started
+            </p>
+          </div>
+          <form onSubmit={handleSubmit} className="grid gap-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="grid gap-2">
+                <Label htmlFor="first-name">First name</Label>
+                <Input name="first-name" placeholder="Max" required />
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="last-name">Last name</Label>
+                <Input name="last-name" placeholder="Robinson" required />
+              </div>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                name="email"
+                type="email"
+                placeholder="example@gmail.com"
+                required
               />
             </div>
-    
-            <button className="w-full border border-solid border-black py-1.5 mt-2.5 rounded
-            transition duration-150 ease hover:bg-black">
-              Sign up
-            </button>
-    
-            
-            <Link href="/login" className="text-sm text-[#888] transition duration-150 ease hover:text-black">
-              Already have an account?
-              </Link>
+            <div className="grid gap-2">
+              <Label htmlFor="password">Password</Label>
+              <Input name="password" type="password" />
+            </div>
+            <Button type="submit" className="w-full">
+              Create an account
+            </Button>
           </form>
-    </section>
-    )
+          <div className="mt-4 text-center text-sm">
+            Already have an account?{" "}
+            <Link href="/login" className="underline">
+              Sign in
+            </Link>
+          </div>
+        </div>
+      </div>
+      <div className="hidden bg-muted lg:block">
+        <Image
+          src="/placeholder.svg"
+          alt="Image"
+          width="1920"
+          height="1080"
+          className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+        />
+      </div>
+    </div>
+  );
 }

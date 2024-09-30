@@ -15,7 +15,9 @@ export async function middleware(req: NextRequest) {
 
     if (!token) {
       // Redirect unauthenticated users to the login page
-      const loginUrl = new URL("/admin/login", req.url);
+      const loginUrl = new URL("/login", req.url);
+      loginUrl.searchParams.set("callbackUrl", req.nextUrl.pathname);
+
       return NextResponse.redirect(loginUrl);
     }
 
