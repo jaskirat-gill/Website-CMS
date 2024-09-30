@@ -1,17 +1,15 @@
-"use client"
-import { useSession, signOut } from "next-auth/react";
-import { Button } from "@/components/ui/button";
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-export function Login() {
-  return (
-    <>
-      <div>Hello World</div>
+export function Admin() {
+  const router = useRouter();
 
-      <Button onClick={() => signOut({ callbackUrl: "/login" })}>
-        Sign Out
-      </Button>
-    </>
-  );
+  useEffect(() => {
+    router.push("/admin/dashboard");
+  }, [router]);
+
+  return null;
 }
 
-export default Login
+export default Admin;
