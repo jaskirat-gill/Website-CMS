@@ -6,7 +6,7 @@ export function Admin() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push("/admin/dashboard");
+    router.push("/admin/orders");
   }, [router]);
 
   return null;
